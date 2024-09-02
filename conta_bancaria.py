@@ -2,6 +2,27 @@ import os
 import time
 from datetime import datetime
 
+
+menu = """
+
+[1] Depositar
+[2] Sacar
+[3] Extrato
+[4] Sair
+
+=> """
+
+saldo = 0
+limite = 500
+extrato = ""
+numero_saques = 0
+LIMITE_SAQUES = 3
+LIMITE_DIARIO = 1500
+valor_sacado_hoje = 0
+quantidade_transacao = 0
+TRANSACAO_DIA = 10
+data_da_ultima_transaco = None
+
 def limpa_aguarda():
     time.sleep(3)
     os.system('cls')
@@ -23,24 +44,30 @@ def ocorrencia():
     return data_hora()
 
 
-menu = """
+def reset_limite():
+    global numero_saques, valor_sacado_hoje, quantidade_transacao, data_da_ultima_transaco
 
-[1] Depositar
-[2] Sacar
-[3] Extrato
-[4] Sair
+    hoje = datetime.now().date()
 
-=> """
+    if data_da_ultima_transaco != hoje:
 
-saldo = 0
-limite = 500
-extrato = ""
-numero_saques = 0
-LIMITE_SAQUES = 3
-LIMITE_DIARIO = 1500
-valor_sacado_hoje = 0
+        numero_saques = 0
+        valor_sacado_hoje = 0
+        quantidade_transacao = 0
+        data_da_ultima_transaco = hoje
+
 
 while True:
+
+    reset_limite()
+
+    if quantidade_transacao >= TRANSACAO_DIA:
+
+        print('Você atingiu o limite de transações do dia.\nTente novamente amanhã')
+
+        limpa_aguarda()
+
+        break
 
     escolha = input(menu)
 
@@ -58,9 +85,11 @@ while True:
                 
                 saldo += valor_deposito
 
-                extrato += f'Operação de depósito. Valor: R$ {valor_deposito:.2f}\n'
+                extrato += f'Operação de depósito. Valor: R$ {valor_deposito:.2f} {ocorrencia()}\n'
+
+                quantidade_transacao += 1
                 
-            print(f'Depósito realizado como seucesso!\nValor R${valor_deposito:.2f} {ocorrencia()}')
+            print(f'Depósito realizado como sucesso!\nValor R${valor_deposito:.2f} {ocorrencia()}')
 
             limpa_aguarda()
 
@@ -108,7 +137,7 @@ while True:
 
                 limpa_tela()
 
-                print('Operação falhou!\nOvalorjá sacado hoje excede o limite diário de R$ 1.500,00')
+                print('Operação falhou!\nO valorjá sacado hoje excede o limite diário de R$ 1.500,00')
 
                 limpa_aguarda()
 
@@ -117,7 +146,7 @@ while True:
                 saldo -= valor_saque
 
 
-                extrato += f'Operação de saque. Valor: R$ {valor_saque:.2f}\n'
+                extrato += f'Operação de saque. Valor: R$ {valor_saque:.2f} {ocorrencia()}\n'
 
                 print(f'Saque realizado como seucesso!\nValor R${valor_saque:.2f} {ocorrencia()}')
 
@@ -128,7 +157,7 @@ while True:
 
                 limpa_tela()
 
-                print('Falha na operação! O valor informado é iválido.')
+                print('Falha na operação! O valor informado é inválido.')
 
                 limpa_aguarda()
 
@@ -138,7 +167,7 @@ while True:
 
             print("\n================ EXTRATO ================")
             print("Sem movimentações." if not extrato else extrato)
-            print(f"\nSaldo: R$ {saldo:.2f}")
+            print(f"\nSaldo: R$ {saldo:.2f} {ocorrencia()}")
             print("==========================================")
 
             sair = input('Deseja encerrar? (S/N)\n')
@@ -151,6 +180,9 @@ while True:
 
 
         elif escolha =='4':
+
+            limpa_tela()
+
             print('Obrigado por utilizar os nossos serviços!')
             limpa_aguarda()
             break
