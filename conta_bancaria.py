@@ -3,12 +3,13 @@ import time
 from datetime import datetime
 
 
-menu = """
+menu = """\n
 
-[1] Depositar
-[2] Sacar
-[3] Extrato
-[4] Sair
+| BANCO PROGRESSO |
+\t[1] Depositar
+\t[2] Sacar
+\t[3] Extrato
+\t[4] Sair
 
 => """
 
